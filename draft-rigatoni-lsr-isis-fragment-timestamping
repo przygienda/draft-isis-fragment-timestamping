@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+    which is available here: http://xml.resource.org. -->
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-rigatoni-lsr-isis-fragment-timestamping-00" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+
+    <!-- ***** FRONT MATTER ***** -->
+
+    <front>
+
+        <title>Optional IS-IS Fragment Timestamping</title>
+
+        <author initials='T.' surname='Przygienda' fullname='Tony Przygienda'>
+            <organization>Juniper Networks</organization>
+            <address>
+                <email>prz@juniper.net</email>
+            </address>
+        </author>
+
+        <author initials='S.' surname='Hegde' fullname='Shraddha Hegde'>
+            <organization>Juniper Networks</organization>
+            <address>
+                <email>shraddha@juniper.net</email>
+            </address>
+        </author>
+
+
+
+
+        <date/>
+
+        <abstract>
+            <t>Different traffic engineering approaches as well as operational tools in ISIS could benefit
+                from understanding at what precise time a specific fragment has been generated and flooded out by a node.
+                This document introduces an optional TLV that can be carried on fragments to encode such information.
+            </t>
+
+
+        </abstract>
+
+    </front>
+
+    <middle>
+
+            <section title="Introduction" anchor="intro">
+                <t>
+
+                </t>
+            </section>
+
+            <section title="Timestamp TLV" anchor="tlvs">
+                <t>
+
+                </t>
+
+
+                <figure align="left">
+                    <artwork align="left" type="ascii-art"><![CDATA[
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |     Type      |     Length    |        ...                    |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  ]]></artwork>
+                </figure>
+
+                <ul>
+                    <li>Type: TBD1</li>
+
+                    <li>Length: ...</li>
+
+
+                    <li>...: ....</li>
+                </ul>
+
+            </section>
+
+
+
+    </middle>
+
+    <back>
+
+        <references title="Normative References">
+
+
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7981.xml'/>
+
+            <!--
+            <reference anchor="ISO10589">
+                <front>
+                    <title>Intermediate system to Intermediate system intra-domain
+                        routeing information exchange protocol for use in conjunction with
+                        the protocol for providing the connectionless-mode Network Service
+                        (ISO 8473)
+                    </title>
+
+                    <author>
+                        <organization abbrev="ISO">International Organization for Standardization</organization>
+                    </author>
+
+                    <date month="Nov" year="2002"/>
+                </front>
+
+                <seriesInfo name="ISO/IEC" value="10589:2002, Second Edition"/>
+            </reference>
+            -->
+
+        </references> <!-- end of normative references -->
+
+        <references title="Informative References">
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5304.xml'/>
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5449.xml'/>
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5614.xml'/>
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8126.xml'/>
+
+        </references> <!-- end of informative references -->
+
+    </back>
+
+</rfc>
