@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+    which is available here: http://xml.resource.org. -->
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-rigatoni-lsr-isis-fragment-timestamping-00" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true" version="3">
+
+    <!-- ***** FRONT MATTER ***** -->
+
+    <front>
+
+        <title>Optional IS-IS Fragment Timestamping</title>
+
+        <author initials='T.' surname='Przygienda' fullname='Tony Przygienda'>
+            <organization>Juniper Networks</organization>
+            <address>
+                <email>prz@juniper.net</email>
+            </address>
+        </author>
+
+        <author initials='C.' surname='Barth' fullname='Colby Barth'>
+            <organization>Juniper Networks</organization>
+            <address>
+                <email>cbarth@juniper.net</email>
+            </address>
+        </author>
+
+
+
+
+        <date/>
+
+        <abstract>
+
+        <t>
+
+
+            Many applications in today’s networks rely on reliable and timely flooding of link-state information,
+            such as, but not limited to Traffic Engineered networks.  If such link-state information is delayed
+            it can be difficult for those applications to adequately fulfill their intended functionality.
+            This document describes extensions
+            to ISIS allowing carrying of fragment origination time.  The origination time can be used to aid
+            troubleshooting and/or by the applications themselves to improve their behavior.
+
+            </t>
+
+
+        </abstract>
+
+    </front>
+
+    <middle>
+
+            <section title="Introduction" anchor="intro">
+                <t>
+  Many applications in today’s networks rely on reliable and timely flooding of link-state information, such as,
+  but not limited to Traffic Engineered networks and advanced telemetry solutions.  If such information is delayed during
+  flooding it can be difficult for those
+  applications to adequately fulfill their intended purpose.  This document describes extensions to ISIS allowing it
+  to carry the origination time on each fragment.
+  The origination time can be used to aid troubleshooting of large domains and/or by the applications themselves
+  to improve their behavior.
+  </t>
+  <t>
+            As an example, in case of Traffic Engineered Networks synchronization of the Traffic Engineering Database (TED) enables
+            the compute nodes to adapt to changes in the network state and/or react to network events in a timely manner.
+            Relying on a synchronized TED while the flooding information is delayed can easily lead
+             to service degradation due to substandard re-optimization of network load.
+              In case fragments carry their origination time proposed in this document meant for consumption by the
+              compute nodes or by an operator of a Traffic Engineered Network and allow to measure any delays in TED synchronization.
+              The awareness of delays incurred in the distribution of information can be incorporated further into algorithms
+              and network tooling to improve the responsiveness and quality of decisions taken.
+              </t>
+
+              <t>
+            A requirement for the correct interpretation of the additions proposed in this document is an
+            infrastructure synchronizing time across devices involved so the timestamps at the various points
+            of interest become comparable.
+            This could be accomplished by utilizing Precision Time Protocol (PTP) IEEE Std. 1588 <xref target="IEEEstd1588"/>
+            or 802.1AS <xref target="IEEEstd8021AS"/> designed for bridged LANs and the achieved precision is carried
+                  in the timestamp.
+
+                </t>
+            </section>
+
+            <section title="Timestamp TLV" anchor="tlvs">
+                <t>This section defines a new, optional TLV that can be present in any fragment. In case of multiple
+                copies only the first occurrence MUST be used. The semantics of the TLV is the point in time the
+                fragment with the current sequence number has been generated. Its absence signifies that such
+                information is not available. </t>
+                <t>
+                    For practical purposes, although desirable, timestamping the moment a fragment is flooded
+                    would be preferable but beside practical implementation problems this could generate on different
+                    interfaces the same fragment with different content which breaks one of the fundamental
+                    tenants of link-state protocols. However, an implementation is free to choose to use, e.g. the moment
+                    the fragment is queued for flooding first time rather than the time the version is generated.
+                </t>
+                <t>To save space the timestamp is following semantically <xref target="IEEEstd1588"/> with the exception of
+                    shorter seconds field including a wrap-around for the epoch and
+                    carrying only 2^-4 of second as maximum resolution of the timestamp since this is considered
+                    sufficient for link-state purposes. The specification follows guidelines of <xref target="RFC8877"/>.
+                </t>
+
+
+                <figure align="left">
+                    <artwork align="left" type="ascii-art"><![CDATA[
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |     Type      |     Length    |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |                         Seconds                               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  | Frac  | Prec  |
+  +-+-+-+-+-+-+-+-+
+
+  ]]></artwork>
+                </figure>
+
+                <ul>
+                    <li>Type: TBD1</li>
+
+                    <li>Length: ...</li>
+
+                    <li>Seconds: 4 bytes of number of seconds since the PTP epoch and following its semantics at
+                        shortened length. Any value
+                    smaller than 0x5000_0000 (roughly AD 2012) MUST be considered as 2^32 + field value (i.e. a
+                        number larger than 2^32).
+                    The resulting wraparound will occur in the year 2078.</li>
+                    <li>Fraction: 4-bits of fraction of the second in units of 2^-4 which is  equivalent
+                        to 1/16 of a second or 60 msec. </li>
+                    <li>Precision: 4 bits indicating the maximum possible slip (either in future or past)
+                        of the clock used to generate the
+                        timestamp (depending on the synchronization
+                    protocol) as 2^-Precision where at minimum of the range 0 signifies 1 second precision (minimum required)
+                        and at maximum of the range 16
+                    indicates a precision of 60 msecs or better. For practical purposes this can be as well the
+                    minimum precision of the synchronization protocol, e.g. stratum deviation.</li>
+                </ul>
+
+            </section>
+
+
+
+    </middle>
+
+    <back>
+
+        <references title="Normative References">
+
+
+            <!--
+            <reference anchor="ISO10589">
+                <front>
+                    <title>Intermediate system to Intermediate system intra-domain
+                        routeing information exchange protocol for use in conjunction with
+                        the protocol for providing the connectionless-mode Network Service
+                        (ISO 8473)
+                    </title>
+
+                    <author>
+                        <organization abbrev="ISO">International Organization for Standardization</organization>
+                    </author>
+
+                    <date month="Nov" year="2002"/>
+                </front>
+
+                <seriesInfo name="ISO/IEC" value="10589:2002, Second Edition"/>
+            </reference>
+            -->
+
+            <reference anchor="IEEEstd1588" target="https://ieeexplore.ieee.org/document/4579760/">
+                <front>
+                    <title>IEEE Standard for a Precision Clock Synchronization Protocol for
+                        Networked Measurement and Control Systems</title>
+                    <seriesInfo name="IEEE" value="Standard 1588"/>
+                    <author>
+                        <organization>IEEE</organization>
+                    </author>
+                    <date/>
+                </front>
+            </reference>
+
+ <reference anchor="IEEEstd8021AS" target="https://ieeexplore.ieee.org/document/5741898/">
+        <front>
+            <title>IEEE Standard for Local and Metropolitan Area Networks - Timing
+                and Synchronization for Time-Sensitive Applications in Bridged Local
+                Area Networks</title>
+            <seriesInfo name="IEEE" value="Standard 802.1AS"/>
+            <author>
+                <organization>IEEE</organization>
+            </author>
+            <date/>
+        </front>
+    </reference>
+
+        </references> <!-- end of normative references -->
+
+        <references title="Informative References">
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8126.xml'/>
+            <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8877.xml'/>
+
+        </references> <!-- end of informative references -->
+
+    </back>
+
+</rfc>
