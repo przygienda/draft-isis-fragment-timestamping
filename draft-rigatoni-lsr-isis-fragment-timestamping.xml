@@ -46,7 +46,7 @@
             such as, but not limited to Traffic Engineered networks.  If such link-state information is delayed
             it can be difficult for those applications to adequately fulfill their intended functionality.
             This document describes extensions
-            to ISIS allowing carrying of fragment origination time.  The origination time can be used to aid
+            to ISIS supporting distribution of fragment origination time.  The origination time can be used to aid
             troubleshooting and/or by the applications themselves to improve their behavior.
 
             </t>
@@ -73,26 +73,29 @@
             the compute nodes to adapt to changes in the network state and/or react to network events in a timely manner.
             Relying on a synchronized TED while the flooding information is delayed can easily lead
              to service degradation due to substandard re-optimization of network load.
-              In case fragments carry their origination time proposed in this document meant for consumption by the
-              compute nodes or by an operator of a Traffic Engineered Network and allow to measure any delays in TED synchronization.
-              The awareness of delays incurred in the distribution of information can be incorporated further into algorithms
+
+            The origination time proposed in this document is meant to be used by the compute nodes or by an operator
+      of Traffic Engineered Network to measure any delays incurred in TED synchronization.
+
+
+              The awareness of delays in the distribution of information can be incorporated further into algorithms
               and network tooling to improve the responsiveness and quality of decisions taken.
               </t>
 
               <t>
             A requirement for the correct interpretation of the additions proposed in this document is an
-            infrastructure synchronizing time across devices involved so the timestamps at the various points
+            infrastructure capable of synchronizing time across devices involved so the timestamps at the various points
             of interest become comparable.
             This could be accomplished by utilizing Precision Time Protocol (PTP) IEEE Std. 1588 <xref target="IEEEstd1588"/>
-            or 802.1AS <xref target="IEEEstd8021AS"/> designed for bridged LANs and the achieved precision is carried
-                  in the timestamp.
+            or 802.1AS <xref target="IEEEstd8021AS"/> designed for bridged LANs. The achieved precision is carried
+                  in the timestamp of the fragment.
 
                 </t>
             </section>
 
             <section title="Timestamp TLV" anchor="tlvs">
                 <t>This section defines a new, optional TLV that can be present in any fragment. In case of multiple
-                copies only the first occurrence MUST be used. The semantics of the TLV is the point in time the
+                instances of the TLV in a fragment only the first occurrence MUST be used. The semantics of the TLV is the point in time the
                 fragment with the current sequence number has been generated. Its absence signifies that such
                 information is not available. </t>
                 <t>
@@ -104,8 +107,8 @@
                 </t>
                 <t>To save space the timestamp is following semantically <xref target="IEEEstd1588"/> with the exception of
                     shorter seconds field including a wrap-around for the epoch and
-                    carrying only 2^-4 of second as maximum resolution of the timestamp since this is considered
-                    sufficient for link-state purposes. The specification follows guidelines of <xref target="RFC8877"/>.
+                    carrying only 2^-4 of a second as maximum resolution of the timestamp since this is considered
+                    sufficient for link-state purposes. The specification follows further guidelines of <xref target="RFC8877"/>.
                 </t>
 
 
@@ -136,7 +139,7 @@
                         number larger than 2^32).
                     The resulting wraparound will occur in the year 2078.</li>
                     <li>Fraction: 4-bits of fraction of the second in units of 2^-4 which is  equivalent
-                        to 1/16 of a second or 60 msec. </li>
+                        to 1/16 of a second or roughly 60 msec. </li>
                     <li>Precision: 4 bits indicating the maximum possible slip (either in future or past)
                         of the clock used to generate the
                         timestamp (depending on the synchronization
